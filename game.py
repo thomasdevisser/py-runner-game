@@ -13,9 +13,10 @@ sky = pygame.image.load('graphics/sky.png').convert()
 ground = pygame.image.load('graphics/ground.png').convert()
 
 snail = pygame.image.load('graphics/snail/snail_1.png').convert_alpha()
-snail_position_x = 600
+snail_rect = snail.get_rect(midbottom=(600, 300))
 
-player = pygame.image.load('graphics/player/player_stand.png').convert()
+player = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+player_rect = player.get_rect(midbottom=(100, 300))
 
 title_surface = font.render('PyRunner', False, 'black')
 
@@ -32,10 +33,12 @@ while True:
 
     screen.blit(title_surface, (50, 50))
 
-    screen.blit(snail, (snail_position_x, 249))
-    snail_position_x -= 2
-    if snail_position_x < -50:
-        snail_position_x = 850
+    screen.blit(snail, snail_rect)
+    screen.blit(player, player_rect)
+
+    snail_rect.left -= 2
+    if snail_rect.left < -100:
+        snail_rect.left = 900
 
     # Rerender the display
     pygame.display.update()
