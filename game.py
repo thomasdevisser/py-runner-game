@@ -7,9 +7,11 @@ pygame.init()
 pygame.display.set_caption('PyRunner')
 screen = pygame.display.set_mode((800, 400))
 clock = pygame.time.Clock()
+font = pygame.font.Font(None, 50)
 
 night_sky = pygame.image.load('assets/night-sky.png')
 night_ground = pygame.image.load('assets/night-ground.png')
+title_surface = font.render('PyRunner', False, '#babec2')
 
 while True:
     # Loop through all the events (player input)
@@ -18,8 +20,10 @@ while True:
             pygame.quit()
             exit()
 
+    # Add the background surfaces
     screen.blit(night_sky, (0, 0))
     screen.blit(night_ground, (0, 290))
+    screen.blit(title_surface, (50, 50))
 
     # Rerender the display
     pygame.display.update()
