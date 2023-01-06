@@ -9,10 +9,10 @@ screen = pygame.display.set_mode((800, 400))
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 50)
 
-night_sky = pygame.image.load('assets/night-sky.png')
-night_ground = pygame.image.load('assets/night-ground.png')
+night_sky = pygame.image.load('assets/night-sky.png').convert()
+night_ground = pygame.image.load('assets/night-ground.png').convert()
 
-snail = pygame.image.load('assets/snail-in-moonlight.png')
+snail = pygame.image.load('assets/snail-in-moonlight.png').convert()
 snail_position_x = 600
 
 title_surface = font.render('PyRunner', False, '#babec2')
@@ -32,6 +32,8 @@ while True:
 
     screen.blit(snail, (snail_position_x, 249))
     snail_position_x -= 2
+    if snail_position_x < -50:
+        snail_position_x = 850
 
     # Rerender the display
     pygame.display.update()
