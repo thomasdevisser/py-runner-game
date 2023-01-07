@@ -20,8 +20,7 @@ ground = pygame.image.load('graphics/ground.png').convert()
 # The player
 player = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
 player_rect = player.get_rect(midbottom=(100, 300))
-player_walking_left = False
-player_walking_right = False
+player_gravity = 0  # The gravity grows the longer you fall to fake physics
 
 # The snail
 snail = pygame.image.load('graphics/snail/snail_1.png').convert_alpha()
@@ -34,24 +33,17 @@ while True:
             pygame.quit()
             exit()
 
+        # Jump if you click the player
+        # if event.type == pygame.MOUSEBUTTONDOWN:
+        #     if player_rect.collidepoint(pygame.mouse.get_pos()):
+        #         player_gravity = -20
+
+        # Check for keyboard input
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                print("JUMP")
-
-            if event.key == pygame.K_d:
-                print("WALK RIGHT")
-                player_walking_right = True
-
-            if event.key == pygame.K_a:
-                print("WALK LEFT")
-                player_walking_left = True
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_d:
-                player_walking_right = False
-
-            if event.key == pygame.K_a:
-                player_walking_left = False
+                # You can only jump if you're on the ground
+                if player_rect.bottom == 300:
+                    player_gravity = -20
 
     # Render all the visuals to the screen
     screen.blit(sky, (0, 0))
@@ -61,13 +53,14 @@ while True:
     screen.blit(player, player_rect)
 
     # Move the characters
-    snail_rect.left -= 2
+    snail_rect.left -= 4
 
-    if player_walking_right:
-        player_rect.right += 2
+    player_gravity += 1
+    player_rect.y += player_gravity
 
-    if player_walking_left:
-        player_rect.left -= 2
+    # Make it look like the player is standing
+    if player_rect.bottom > 300:
+        player_rect.bottom = 300
 
     # Handle graphics going off-screen
     if snail_rect.left < -100:
@@ -78,9 +71,9 @@ while True:
         print("BOOM, snail hits the player")
 
     # Check for mouse colliding
-    mouse = pygame.mouse.get_pos()
-    if player_rect.collidepoint(mouse):
-        print("mouse on player")
+    # mouse = pygame.mouse.get_pos()
+    # if player_rect.collidepoint(mouse):
+    #     print("mouse on player")
 
     # Check for keys being pressed
     # keys_pressed = pygame.key.get_pressed()
