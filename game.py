@@ -58,7 +58,7 @@ while True:
                 if event.key == pygame.K_SPACE:
                     # You can only jump if you're on the ground
                     if player_rect.bottom == 300:
-                        player_gravity = -20
+                        player_gravity = -24
         else:
             if event.type == pygame.KEYDOWN:
                 snail_rect.left = 600
@@ -76,8 +76,8 @@ while True:
         display_game_state("Dodge the snails!")
         display_score(score)
 
-        # Move the characters
-        snail_rect.left -= 6
+        # Move the snails
+        snail_rect.left -= (5 + score / 2)
 
         player_gravity += 1
         player_rect.y += player_gravity
