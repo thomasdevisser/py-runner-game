@@ -26,7 +26,6 @@ game_active = True
 font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 score = 0
-state_text = "Dodge the snails!"
 
 # The scene
 sky = pygame.image.load('graphics/sky.png').convert()
@@ -62,12 +61,8 @@ while True:
                         player_gravity = -20
         else:
             if event.type == pygame.KEYDOWN:
-                snail_rect = snail.get_rect(midbottom=(600, 300))
-                player_rect = player.get_rect(midbottom=(100, 300))
-                game_state = font.render('Dodge the snails!', False, 'black')
-                game_state_rect = game_state.get_rect(midtop=(400, 50))
+                snail_rect.left = 600
                 score = 0
-                state_text = "Dodge the snails!"
                 game_active = True
 
     if game_active:
@@ -78,7 +73,7 @@ while True:
         screen.blit(snail, snail_rect)
         screen.blit(player, player_rect)
 
-        display_game_state(state_text)
+        display_game_state("Dodge the snails!")
         display_score(score)
 
         # Move the characters
@@ -118,8 +113,7 @@ while True:
         clock.tick(60)
     else:
         screen.fill("#cdf2f5")
-        state_text = "Game over!"
-        display_game_state(state_text)
+        display_game_state("Game over!")
 
         # Rerender the display
         pygame.display.update()
