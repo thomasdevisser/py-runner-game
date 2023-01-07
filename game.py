@@ -1,6 +1,13 @@
 import pygame
 from sys import exit
 
+
+def display_score(score):
+    score_display = font.render("{}".format(score), False, 'black')
+    score_display_rect = score_display.get_rect(topleft=(50, 50))
+    screen.blit(score_display, score_display_rect)
+
+
 pygame.init()
 
 # Create the display and time
@@ -14,8 +21,6 @@ font = pygame.font.Font('font/Pixeltype.ttf', 50)
 game_state = font.render('Dodge the snails!', False, 'black')
 game_state_rect = game_state.get_rect(midtop=(400, 50))
 score = 0
-score_display = font.render("{}".format(score), False, 'black')
-score_display_rect = score_display.get_rect(topleft=(50, 50))
 
 # The scene
 sky = pygame.image.load('graphics/sky.png').convert()
@@ -63,9 +68,9 @@ while True:
         screen.blit(sky, (0, 0))
         screen.blit(ground, (0, 300))
         screen.blit(game_state, game_state_rect)
-        screen.blit(score_display, score_display_rect)
         screen.blit(snail, snail_rect)
         screen.blit(player, player_rect)
+        display_score(score)
 
         # Move the characters
         snail_rect.left -= 6
@@ -81,8 +86,6 @@ while True:
         if snail_rect.left < -100:
             snail_rect.left = 900
             score += 1
-            score_display = font.render("{}".format(score), False, 'black')
-            screen.blit(score_display, score_display_rect)
 
         # Check for rectangles colliding
         if player_rect.colliderect(snail_rect):
