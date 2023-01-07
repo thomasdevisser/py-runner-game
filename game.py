@@ -8,6 +8,12 @@ def display_score(score):
     screen.blit(score_display, score_display_rect)
 
 
+def display_game_state(state_text):
+    game_state = font.render(state_text, False, 'black')
+    game_state_rect = game_state.get_rect(midtop=(400, 50))
+    screen.blit(game_state, game_state_rect)
+
+
 pygame.init()
 
 # Create the display and time
@@ -18,9 +24,9 @@ game_active = True
 
 # The text
 font = pygame.font.Font('font/Pixeltype.ttf', 50)
-game_state = font.render('Dodge the snails!', False, 'black')
-game_state_rect = game_state.get_rect(midtop=(400, 50))
+
 score = 0
+state_text = "Dodge the snails!"
 
 # The scene
 sky = pygame.image.load('graphics/sky.png').convert()
@@ -61,15 +67,18 @@ while True:
                 game_state = font.render('Dodge the snails!', False, 'black')
                 game_state_rect = game_state.get_rect(midtop=(400, 50))
                 score = 0
+                state_text = "Dodge the snails!"
                 game_active = True
 
     if game_active:
         # Render all the visuals to the screen
         screen.blit(sky, (0, 0))
         screen.blit(ground, (0, 300))
-        screen.blit(game_state, game_state_rect)
+
         screen.blit(snail, snail_rect)
         screen.blit(player, player_rect)
+
+        display_game_state(state_text)
         display_score(score)
 
         # Move the characters
@@ -108,10 +117,9 @@ while True:
         # Set the framerate to a max of 60fps
         clock.tick(60)
     else:
-        screen.fill("black")
-        game_state = font.render('Game Over', False, 'white')
-        game_state_rect = game_state.get_rect(midtop=(400, 50))
-        screen.blit(game_state, game_state_rect)
+        screen.fill("#cdf2f5")
+        state_text = "Game over!"
+        display_game_state(state_text)
 
         # Rerender the display
         pygame.display.update()
