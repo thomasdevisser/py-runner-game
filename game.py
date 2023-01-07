@@ -11,6 +11,12 @@ def display_score():
     return score
 
 
+def display_final_score(score):
+    score_display = font.render(f"You scored {score}", False, 'black')
+    score_display_rect = score_display.get_rect(center=(400, 350))
+    screen.blit(score_display, score_display_rect)
+
+
 def display_game_state(state_text):
     game_state = font.render(state_text, False, 'black')
     game_state_rect = game_state.get_rect(midtop=(400, 50))
@@ -20,7 +26,7 @@ def display_game_state(state_text):
 def spawn_enemies(enemy_rect_list):
     if enemy_rect_list:
         for enemy_rect in enemy_rect_list:
-            enemy_rect.x -= randint(2, 5)
+            enemy_rect.x -= randint(4, 5)
 
             if enemy_rect.bottom == 300:
                 screen.blit(snail, enemy_rect)
@@ -64,6 +70,12 @@ ground = pygame.image.load('graphics/ground.png').convert()
 player = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
 player_rect = player.get_rect(midbottom=(100, 300))
 
+# Player on game inactive
+player_stand = pygame.image.load(
+    'graphics/player/player_stand.png').convert_alpha()
+player_stand = pygame.transform.rotozoom(player_stand, 0, 2)
+player_stand_rect = player_stand.get_rect(center=(400, 200))
+
 # The snail
 snail = pygame.image.load('graphics/snail/snail_1.png').convert_alpha()
 
@@ -75,7 +87,7 @@ enemy_rect_list = []
 
 # Making a custom event
 snail_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(snail_timer, randint(1100, 1500))
+pygame.time.set_timer(snail_timer, randint(1200, 1400))
 
 while True:
     # Loop through all the events (player input)
@@ -89,8 +101,9 @@ while True:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     # You can only jump if you're on the ground
-                    if player_rect.bottom == 300:
-                        player_gravity = -24
+                    print(player_rect.bottom)
+                    if player_rect.bottom <= 300 and player_rect.bottom > 100:
+                        player_gravity = -15
 
             if event.type == snail_timer:
                 if randint(0, 2):
@@ -102,7 +115,7 @@ while True:
         else:
             if event.type == pygame.KEYDOWN:
                 start_score = int(pygame.time.get_ticks() / 100)
-                enemy_rect_list = []
+                enemy_rect_list.clear()
                 game_active = True
 
     if game_active:
@@ -127,7 +140,9 @@ while True:
         game_active = check_collision(player_rect, enemy_rect_list)
     else:
         screen.fill("#cdf2f5")
+        screen.blit(player_stand, player_stand_rect)
         display_game_state("Game over!")
+        display_final_score(score)
 
     # Rerender the display
     pygame.display.update()
