@@ -26,7 +26,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.animate()
-        self.rect.x -= 4
+        self.rect.x -= 6
         self.destroy()
 
     def destroy(self):

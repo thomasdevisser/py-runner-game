@@ -34,7 +34,16 @@ def collision_sprites():
 
 pygame.init()
 
+# The scene
+pygame.display.set_caption('PyRunner')
+screen = pygame.display.set_mode((800, 400))
+sky = pygame.image.load('graphics/sky.png').convert()
+ground = pygame.image.load('graphics/ground.png').convert()
+
 # Create the general game settings
+soundtrack = pygame.mixer.Sound('audio/music.wav')
+soundtrack.set_volume(0.2)
+soundtrack.play(loops=-1)
 font = pygame.font.Font('font/Pixeltype.ttf', 50)
 clock = pygame.time.Clock()
 game_active = True
@@ -46,12 +55,6 @@ enemies = pygame.sprite.Group()
 player = pygame.sprite.GroupSingle()
 
 player.add(Player())
-
-# The scene
-pygame.display.set_caption('PyRunner')
-screen = pygame.display.set_mode((800, 400))
-sky = pygame.image.load('graphics/sky.png').convert()
-ground = pygame.image.load('graphics/ground.png').convert()
 
 # Player on game inactive
 player_stand = pygame.image.load(
