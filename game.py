@@ -47,6 +47,18 @@ def check_collision(player, enemies):
     return True
 
 
+def player_animation():
+    global player, player_index
+
+    if player_rect.bottom < 300:
+        player = player_jump
+    else:
+        player_index += 0.1
+        if player_index >= len(player_walk):
+            player_index = 0
+        player = player_walk[int(player_index)]
+
+
 pygame.init()
 
 # Create the display and time
@@ -67,7 +79,18 @@ sky = pygame.image.load('graphics/sky.png').convert()
 ground = pygame.image.load('graphics/ground.png').convert()
 
 # The player
-player = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+player_walk_1 = pygame.image.load(
+    'graphics/player/player_walk_1.png').convert_alpha()
+player_walk_2 = pygame.image.load(
+    'graphics/player/player_walk_2.png').convert_alpha()
+player_walk = [player_walk_1, player_walk_2]
+
+player_index = 0
+
+player_jump = pygame.image.load(
+    'graphics/player/player_jump.png').convert_alpha()
+
+player = player_walk[player_index]
 player_rect = player.get_rect(midbottom=(100, 300))
 
 # Player on game inactive
@@ -86,8 +109,8 @@ fly = pygame.image.load('graphics/fly/fly_1.png').convert_alpha()
 enemy_rect_list = []
 
 # Making a custom event
-snail_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(snail_timer, randint(1200, 1400))
+enemy_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(enemy_timer, randint(1200, 1400))
 
 while True:
     # Loop through all the events (player input)
@@ -105,7 +128,7 @@ while True:
                     if player_rect.bottom <= 300 and player_rect.bottom > 100:
                         player_gravity = -15
 
-            if event.type == snail_timer:
+            if event.type == enemy_timer:
                 if randint(0, 2):
                     enemy_rect_list.append(snail.get_rect(
                         midbottom=(randint(900, 1200), 300)))
@@ -123,6 +146,7 @@ while True:
         screen.blit(sky, (0, 0))
         screen.blit(ground, (0, 300))
 
+        player_animation()
         screen.blit(player, player_rect)
 
         enemy_rect_list = spawn_enemies(enemy_rect_list)
