@@ -64,7 +64,7 @@ player_stand_rect = player_stand.get_rect(center=(400, 200))
 
 # Custom events
 enemy_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(enemy_timer, randint(1200, 1400))
+pygame.time.set_timer(enemy_timer, randint(800, 1200))
 
 while True:
     # Loop through all the events (player input)
