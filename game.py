@@ -1,6 +1,6 @@
 import pygame
 from sys import exit
-from random import randint
+from random import randint, choice
 
 
 class Player(pygame.sprite.Sprite):
@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.player_jump = pygame.image.load(
             'graphics/player/player_jump.png').convert_alpha()
         self.image = self.player_walk[self.player_index]
-        self.rect = self.image.get_rect(midbottom=(200, 300))
+        self.rect = self.image.get_rect(midbottom=(150, 300))
         self.gravity = 0
 
     def update(self):
@@ -25,8 +25,8 @@ class Player(pygame.sprite.Sprite):
 
     def player_input(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and self.rect.bottom >= 300 and self.rect.bottom > 100:
-            self.gravity = -15
+        if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
+            self.gravity = -20
 
     def apply_gravity(self):
         self.gravity += 1
@@ -42,6 +42,44 @@ class Player(pygame.sprite.Sprite):
             if self.player_index >= len(self.player_walk):
                 self.player_index = 0
             self.image = self.player_walk[int(self.player_index)]
+
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, type):
+        super().__init__()
+        if type == 'fly':
+            fly_1 = pygame.image.load('graphics/fly/fly_1.png').convert_alpha()
+            fly_2 = pygame.image.load('graphics/fly/fly_2.png').convert_alpha()
+            self.frames = [fly_1, fly_2]
+            self.index = 0
+            y_pos = 210
+        else:
+            snail_1 = pygame.image.load(
+                'graphics/snail/snail_1.png').convert_alpha()
+            snail_2 = pygame.image.load(
+                'graphics/snail/snail_2.png').convert_alpha()
+            self.frames = [snail_1, snail_2]
+            self.index = 0
+            y_pos = 300
+
+        self.animation_index = 0
+        self.image = self.frames[self.animation_index]
+        self.rect = self.image.get_rect(midbottom=(randint(900, 1100), y_pos))
+
+    def update(self):
+        self.animate()
+        self.rect.x -= 4
+        self.destroy()
+
+    def destroy(self):
+        if self.rect.x <= -100:
+            self.kill()
+
+    def animate(self):
+        self.index += 0.1
+        if self.index >= len(self.frames):
+            self.index = 0
+        self.image = self.frames[int(self.index)]
 
 
 def display_score():
@@ -63,29 +101,12 @@ def display_game_state(state_text):
     game_state_rect = game_state.get_rect(midtop=(400, 50))
     screen.blit(game_state, game_state_rect)
 
-
-def spawn_enemies(enemy_rect_list):
-    if enemy_rect_list:
-        for enemy_rect in enemy_rect_list:
-            enemy_rect.x -= randint(4, 5)
-
-            if enemy_rect.bottom == 300:
-                screen.blit(snail, enemy_rect)
-            else:
-                screen.blit(fly, enemy_rect)
-
-        enemy_rect_list = [
-            enemy for enemy in enemy_rect_list if enemy.x > -100]
-
-    return enemy_rect_list
-
-
-def check_collision(player, enemies):
-    if enemies:
-        for enemy in enemy_rect_list:
-            if player.colliderect(enemy):
-                return False
-    return True
+# def check_collision(player, enemies):
+#     if enemies:
+#         for enemy in enemy_rect_list:
+#             if player.colliderect(enemy):
+#                 return False
+#     return True
 
 
 pygame.init()
@@ -102,6 +123,8 @@ font = pygame.font.Font('font/Pixeltype.ttf', 50)
 start_score = 0
 score = 0
 
+# Groups
+enemies = pygame.sprite.Group()
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
@@ -115,32 +138,9 @@ player_stand = pygame.image.load(
 player_stand = pygame.transform.rotozoom(player_stand, 0, 2)
 player_stand_rect = player_stand.get_rect(center=(400, 200))
 
-# The snail
-snail_1 = pygame.image.load('graphics/snail/snail_1.png').convert_alpha()
-snail_2 = pygame.image.load('graphics/snail/snail_2.png').convert_alpha()
-snail_list = [snail_1, snail_2]
-snail_index = 0
-snail = snail_list[snail_index]
-
-# The fly
-fly_1 = pygame.image.load('graphics/fly/fly_1.png').convert_alpha()
-fly_2 = pygame.image.load('graphics/fly/fly_2.png').convert_alpha()
-fly_list = [fly_1, fly_2]
-fly_index = 0
-fly = fly_list[fly_index]
-
-# Enemies
-enemy_rect_list = []
-
 # Making a custom event
 enemy_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer, randint(1200, 1400))
-
-snail_animation_timer = pygame.USEREVENT + 2
-pygame.time.set_timer(snail_animation_timer, 500)
-
-fly_animation_timer = pygame.USEREVENT + 2
-pygame.time.set_timer(fly_animation_timer, 200)
 
 while True:
     # Loop through all the events (player input)
@@ -151,30 +151,10 @@ while True:
 
         if game_active:
             if event.type == enemy_timer:
-                if randint(0, 2):
-                    enemy_rect_list.append(snail.get_rect(
-                        midbottom=(randint(900, 1200), 300)))
-                else:
-                    enemy_rect_list.append(fly.get_rect(
-                        midbottom=(randint(900, 1200), 200)))
-
-            if event.type == snail_animation_timer:
-                if snail_index == 0:
-                    snail_index = 1
-                else:
-                    snail_index = 0
-                snail = snail_list[snail_index]
-
-            if event.type == fly_animation_timer:
-                if fly_index == 0:
-                    fly_index = 1
-                else:
-                    fly_index = 0
-                fly = fly_list[fly_index]
+                enemies.add(Enemy(choice(['snail', 'snail', 'snail', 'fly'])))
         else:
             if event.type == pygame.KEYDOWN:
                 start_score = int(pygame.time.get_ticks() / 100)
-                enemy_rect_list.clear()
                 game_active = True
 
     if game_active:
@@ -185,7 +165,8 @@ while True:
         player.draw(screen)
         player.update()
 
-        enemy_rect_list = spawn_enemies(enemy_rect_list)
+        enemies.draw(screen)
+        enemies.update()
 
         display_game_state("Don't get hit!")
         score = display_score()
